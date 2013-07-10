@@ -19,6 +19,7 @@ module class_atom
         procedure :: invert_down_bands
         procedure :: init => atom_init
         procedure :: totals => atom_totals
+        ! procedure :: write_proj_dos
         procedure :: write_proj_dos_p
         procedure :: write_proj_dos_d
     end type atom
