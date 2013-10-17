@@ -1,5 +1,9 @@
 program parsedoscar
 
+! Written by B. J. Morgan
+! 17/10/13
+! www.analysisandsynthesis.com
+
 use class_species
 
 implicit none
@@ -11,10 +15,12 @@ integer i, j, k, l, nspec, unitnum
 character(len=50) :: filename
 character(len=50) :: system_title
 character(len=20) :: dummy(5)
+character(len=20) :: string_in
 character(len=1)  :: maxl
 real :: fermi_energy_shift
 real, allocatable :: energy(:)
-logical :: spinpol, noncoll, dproj
+logical :: spinpol, noncoll
+logical :: orbital_proj, s_proj, p_proj, d_proj, f_proj
 integer :: nedos
 
 type sumdos
@@ -66,8 +72,17 @@ if ((maxl /= "d").and.(maxl /= "f")) then
     stop
 endif
 
-write(6,*) "output separate d orbitals? (T/F):"
-read(5,*) dproj
+write(6,*) "output separate orbitals? (T/F):"
+read(5,*) orbital_proj
+
+if ( orbital_proj ) then
+    write(6,*) "which projected orbitals to output? s/p/d/(f):"
+    read(5,*) string_in
+    if ( scan( string_in, 's' ) /= 0 ) s_proj = .true.
+    if ( scan( string_in, 'p' ) /= 0 ) p_proj = .true.
+    if ( scan( string_in, 'd' ) /= 0 ) d_proj = .true.
+    if ( scan( string_in, 'f' ) /= 0 ) f_proj = .true.
+end if
 
 ! read header of DOS file
 write(6,*)"opening DOS file"
@@ -185,10 +200,13 @@ enddo
 ! shift energy values to give correct Fermi level
 energy = energy - fermi_energy_shift
 
-if (dproj) then ! output d orbital projections
+if ( orbital_proj ) then 
     do i=1, nspec
         do j=1, spec(i)%numatoms
-            call spec(i)%atomno(j)%write_proj_dos_d( "fortd."//char(48+i)//"."//char(48+j), energy(1:nedos), energy(1), energy(nedos) )
+            if ( s_proj ) call spec(i)%atomno(j)%write_proj_dos_s( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_s.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( p_proj ) call spec(i)%atomno(j)%write_proj_dos_p( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_p.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( d_proj ) call spec(i)%atomno(j)%write_proj_dos_d( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_d.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( f_proj ) call spec(i)%atomno(j)%write_proj_dos_f( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_f.dat", energy(1:nedos), energy(1), energy(nedos) )
         end do
     end do
 end if
@@ -197,11 +215,11 @@ end if
 
 if (spinpol) then
     do i=1, nspec
-        call spec(i)%writedos( "fort."//char(48+i), energy(1:nedos), energy(1), energy(nedos) )
+        call spec(i)%writedos( "spec_"//char(48+i)//"all.dat", energy(1:nedos), energy(1), energy(nedos) )
     enddo
 else
     do i=1, nspec
-        call spec(i)%writedosnospin("fort."//char(48+i), energy(1:nedos), energy(1), energy(nedos))
+        call spec(i)%writedosnospin("spec_"//char(48+i)//"all.dat", energy(1:nedos), energy(1), energy(nedos) )
     enddo
 endif
 

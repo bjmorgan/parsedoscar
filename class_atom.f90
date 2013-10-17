@@ -20,8 +20,10 @@ module class_atom
         procedure :: init => atom_init
         procedure :: totals => atom_totals
         ! procedure :: write_proj_dos
+        procedure :: write_proj_dos_s
         procedure :: write_proj_dos_p
         procedure :: write_proj_dos_d
+        procedure :: write_proj_dos_f
     end type atom
 
 contains
@@ -276,6 +278,31 @@ contains
 
     end subroutine invert_down_bands
 
+    subroutine write_proj_dos_f( this, filename, energy, e_min, e_max )
+        implicit none
+        class( atom ) :: this
+        character(len=*), intent(in) :: filename
+        real, dimension(:), intent(in) :: energy
+        real, intent(in) :: e_min, e_max
+        integer :: j, i
+        real :: output(7)
+        type( dos_file ) :: dos
+        character(len=20) :: header
+
+        header = "# Energy/eV f-3 f-2 f-1 f0 f1 f2 f3"
+
+        call dos%open( filename, 7, header ) 
+            do j=1, size(energy)
+                if ( ( energy(j) .ge. e_min ) .and. ( energy(j) .le. e_max ) ) then
+                        forall (i=1:7)
+                            output(i) = this%f(i)%up%bandno(j)
+                        end forall
+                    call dos%write( energy(j), output ) 
+                end if
+            end do
+        call dos%close
+    end subroutine write_proj_dos_f
+
     subroutine write_proj_dos_d( this, filename, energy, e_min, e_max )
         implicit none
         class( atom ) :: this
@@ -325,5 +352,28 @@ contains
             end do
         call dos%close
     end subroutine write_proj_dos_p
+
+    subroutine write_proj_dos_s( this, filename, energy, e_min, e_max )
+        implicit none
+        class( atom ) :: this
+        character(len=*), intent(in) :: filename
+        real, dimension(:), intent(in) :: energy
+        real, intent(in) :: e_min, e_max
+        integer :: j, i
+        real :: output(1)
+        type( dos_file ) :: dos
+        character(len=20) :: header
+
+        header = "# Energy/eV s"
+
+        call dos%open( filename, 1, header ) 
+            do j=1, size(energy)
+                if ( ( energy(j) .ge. e_min ) .and. ( energy(j) .le. e_max ) ) then
+                        output(1) = this%s(i)%up%bandno(j)
+                    call dos%write( energy(j), output ) 
+                end if
+            end do
+        call dos%close
+    end subroutine write_proj_dos_s
 
 end module class_atom
