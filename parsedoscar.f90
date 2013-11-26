@@ -187,7 +187,7 @@ endif
 ! average over angular momenta for each atom
 do i=1, nspec
     do j=1, spec(i)%numatoms
-        call spec(i)%atomno(i)%totals
+        call spec(i)%atomno(j)%totals
     enddo
 enddo
         
