@@ -1,6 +1,6 @@
-OBJS=parsedoscar.o class_atom.o class_orbital.o class_species.o class_spin.o class_dos_file.o
-EXECUTABLE=parsedoscar
-COMPILER=ifort
+OBJS := parsedoscar.o class_atom.o class_orbital.o class_species.o class_spin.o class_dos_file.o
+EXECUTABLE := parsedoscar
+COMPILER := ifort
 
 all: app
 

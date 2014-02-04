@@ -17,6 +17,7 @@ character(len=50) :: system_title
 character(len=20) :: dummy(5)
 character(len=20) :: string_in
 character(len=1)  :: maxl
+character(len=2)  :: i_string, j_string
 real :: fermi_energy_shift
 real, allocatable :: energy(:)
 logical :: spinpol, noncoll
@@ -29,6 +30,8 @@ end type sumdos
 
 type(sumdos) :: summeddos
 type(species), allocatable :: spec(:)
+
+character(len=2) :: integer_to_string
 
 !**************************************************
 
@@ -202,11 +205,13 @@ energy = energy - fermi_energy_shift
 
 if ( orbital_proj ) then 
     do i=1, nspec
+        i_string = integer_to_string( i )
         do j=1, spec(i)%numatoms
-            if ( s_proj ) call spec(i)%atomno(j)%write_proj_dos_s( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_s.dat", energy(1:nedos), energy(1), energy(nedos) )
-            if ( p_proj ) call spec(i)%atomno(j)%write_proj_dos_p( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_p.dat", energy(1:nedos), energy(1), energy(nedos) )
-            if ( d_proj ) call spec(i)%atomno(j)%write_proj_dos_d( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_d.dat", energy(1:nedos), energy(1), energy(nedos) )
-            if ( f_proj ) call spec(i)%atomno(j)%write_proj_dos_f( "spec_"//char(48+i)//"_atom_"//char(48+j)//"_f.dat", energy(1:nedos), energy(1), energy(nedos) )
+            j_string = integer_to_string( j )
+            if ( s_proj ) call spec(i)%atomno(j)%write_proj_dos_s( "spec_"//trim( i_string )//"_atom_"//trim( j_string )//"_s.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( p_proj ) call spec(i)%atomno(j)%write_proj_dos_p( "spec_"//trim( i_string )//"_atom_"//trim( j_string )//"_p.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( d_proj ) call spec(i)%atomno(j)%write_proj_dos_d( "spec_"//trim( i_string )//"_atom_"//trim( j_string )//"_d.dat", energy(1:nedos), energy(1), energy(nedos) )
+            if ( f_proj ) call spec(i)%atomno(j)%write_proj_dos_f( "spec_"//trim( i_string )//"_atom_"//trim( j_string )//"_f.dat", energy(1:nedos), energy(1), energy(nedos) )
         end do
     end do
 end if
@@ -215,12 +220,33 @@ end if
 
 if (spinpol) then
     do i=1, nspec
-        call spec(i)%writedos( "spec_"//char(48+i)//"all.dat", energy(1:nedos), energy(1), energy(nedos) )
+        call spec(i)%writedos( "spec_"//char(48+i)//"_all.dat", energy(1:nedos), energy(1), energy(nedos) )
     enddo
 else
     do i=1, nspec
-        call spec(i)%writedosnospin("spec_"//char(48+i)//"all.dat", energy(1:nedos), energy(1), energy(nedos) )
+        call spec(i)%writedosnospin("spec_"//char(48+i)//"_all.dat", energy(1:nedos), energy(1), energy(nedos) )
     enddo
 endif
 
 end program parsedoscar
+
+function integer_to_string( i )
+
+    implicit none
+    integer, intent(in) :: i
+    character(len=*) :: integer_to_string
+    character(len=4) :: string_format
+
+    select case( i )
+        case ( : 9)
+            string_format = "(i1)"
+        case (10:99)
+            string_format = "(i2)"
+        case default
+            stop("abort: integer > 99 in integer_to_string")
+    end select
+
+    write( integer_to_string, string_format ) i
+    integer_to_string = trim( integer_to_string )
+
+end function integer_to_string
