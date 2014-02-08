@@ -359,7 +359,7 @@ contains
         character(len=*), intent(in) :: filename
         real, dimension(:), intent(in) :: energy
         real, intent(in) :: e_min, e_max
-        integer :: j, i
+        integer :: j
         real :: output(1)
         type( dos_file ) :: dos
         character(len=20) :: header
@@ -369,7 +369,7 @@ contains
         call dos%open( filename, 1, header ) 
             do j=1, size(energy)
                 if ( ( energy(j) .ge. e_min ) .and. ( energy(j) .le. e_max ) ) then
-                        output(1) = this%s(i)%up%bandno(j)
+                        output(1) = this%s(1)%up%bandno(j)
                     call dos%write( energy(j), output ) 
                 end if
             end do
