@@ -178,7 +178,7 @@ else
 endif
 
 
-if( spinpol )then
+if (spinpol) then
 ! multiply all down spin values by -1
     do i=1, nspec
         do j=1, spec(i)%numatoms

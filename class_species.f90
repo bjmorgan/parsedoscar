@@ -44,13 +44,13 @@ contains
         integer :: j
 
         do j=1, this%numatoms
-            this%stot%up%bandno = this%stot%up%bandno + this%atomno(j)%stot%up%bandno
+            this%stot%up%bandno   = this%stot%up%bandno   + this%atomno(j)%stot%up%bandno
+            this%ptot%up%bandno   = this%ptot%up%bandno   + this%atomno(j)%ptot%up%bandno
+            this%dtot%up%bandno   = this%dtot%up%bandno   + this%atomno(j)%dtot%up%bandno
+            this%ftot%up%bandno   = this%ftot%up%bandno   + this%atomno(j)%ftot%up%bandno
             this%stot%down%bandno = this%stot%down%bandno + this%atomno(j)%stot%down%bandno
-            this%ptot%up%bandno = this%ptot%up%bandno + this%atomno(j)%ptot%up%bandno
             this%ptot%down%bandno = this%ptot%down%bandno + this%atomno(j)%ptot%down%bandno
-            this%dtot%up%bandno = this%dtot%up%bandno + this%atomno(j)%dtot%up%bandno
             this%dtot%down%bandno = this%dtot%down%bandno + this%atomno(j)%dtot%down%bandno
-            this%ftot%up%bandno = this%ftot%up%bandno + this%atomno(j)%ftot%up%bandno
             this%ftot%down%bandno = this%ftot%down%bandno + this%atomno(j)%ftot%down%bandno
         enddo
 
