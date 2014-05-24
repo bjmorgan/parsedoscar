@@ -262,19 +262,19 @@ contains
         class( atom ) :: this
         integer :: i
 
-        this%s(1)%down%bandno = -this%s(1)%down%bandno
+        this%s(1)%down%bandno     = -this%s(1)%down%bandno
 
-        forall( i=1:3 )
+        do concurrent (i=1:3)
             this%p(i)%down%bandno = -this%p(i)%down%bandno
-        end forall
+        end do
 
-        forall( i=1:5 )
+        do concurrent (i=1:5)
             this%d(i)%down%bandno = -this%d(i)%down%bandno
-        end forall
+        end do
 
-        forall( i=1:7 )
+        do concurrent (i=1:7)
             this%f(i)%down%bandno = -this%f(i)%down%bandno
-        end forall
+        end do
 
     end subroutine invert_down_bands
 
