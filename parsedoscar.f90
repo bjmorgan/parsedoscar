@@ -12,9 +12,9 @@ integer, parameter :: natommax=400
 integer, parameter :: nmaxspec=5
 
 integer i, j, k, l, nspec, unitnum
-character(len=50) :: filename
+character(len=20) :: filename
 character(len=50) :: system_title
-character(len=20) :: dummy(5)
+character(len=20) :: dummy
 character(len=20) :: string_in
 character(len=1)  :: maxl
 character(len=2)  :: i_string, j_string
@@ -40,6 +40,7 @@ character(len=2) :: integer_to_string
 
 write(6,*) "input DOS filename:"
 read(5,*) filename
+filename = trim( filename )
 
 write(6,*) "input number of species:"
 read(5,*) nspec
@@ -88,8 +89,8 @@ if ( orbital_proj ) then
 end if
 
 ! read header of DOS file
-write(6,*)"opening DOS file"
-open(unit=10, file=filename, status="old", action="read")
+write(6,*)"opening DOS file", filename
+open( file=filename, unit=10 )
 
 write(6,*)"reading DOS file"
 
@@ -99,7 +100,7 @@ enddo
 
 read(10,*) system_title
 
-read(10,*) dummy(1), dummy(1), nedos, fermi_energy_shift, dummy(1)
+read(10,*) dummy, dummy, nedos, fermi_energy_shift, dummy
 
 do i=1, nspec
     call spec(i)%init( nedos )
@@ -114,11 +115,11 @@ allocate( summeddos%down%bandno( nedos ) )
 
 if (spinpol) then
     do i=1, nedos
-        read(10,*) energy(i), summeddos%up%bandno(i), summeddos%down%bandno(i), dummy(1), dummy(1)
+        read(10,*) energy(i), summeddos%up%bandno(i), summeddos%down%bandno(i), dummy, dummy
     enddo
 else
     do i=1, nedos
-        read(10,*) energy(i), summeddos%up%bandno(i), dummy(1)
+        read(10,*) energy(i), summeddos%up%bandno(i), dummy
     enddo
 endif
 
